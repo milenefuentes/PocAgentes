@@ -1,0 +1,389 @@
+{
+  "version": "3.1",
+  "descripcion": "Manual Operativo de Modalidades de Fraude - SuperBank / Claims AI",
+  "notas_version": "v3.1: se agregan frases típicas del cliente, criterios para diferenciar modalidades parecidas, riesgo base, categoría y el catálogo de casos que no son fraude, tomados del Manual PoC v0.1 (manual_modalidades_fraude_poc.json, basado en alertas públicas de SBS, ASBANC y BN). Se mantienen las 8 modalidades de la v3.0. Contenido referencial: reemplazar por el catálogo oficial de Interbank.",
+  "categorias": {
+    "ING_SOCIAL": "El cliente fue engañado y entregó datos/credenciales (no autorizó el consumo final)",
+    "AUTORIZADO_ENGANO": "El cliente hizo la operación él mismo, engañado (APP fraud)",
+    "COMPROMISO_TARJETA": "Datos de tarjeta robados o clonados sin participación del cliente",
+    "COMPROMISO_DISPOSITIVO": "Toma de control del celular, línea o app",
+    "IDENTIDAD": "Suplantación de identidad o biometría",
+    "ENTORNO_CERCANO": "Una persona cercana al titular usó la tarjeta o el dispositivo, sin delincuentes externos"
+  },
+  "modalidades": {
+    "tarjeta_clonada": {
+      "nombre": "Tarjeta Clonada (Skimming)",
+      "definicion": "Duplicacion de la banda magnetica o chip de la tarjeta fisica mediante lectores adulterados (cajeros, POS). El cliente mantiene la posesion fisica de la tarjeta al momento de las transacciones no reconocidas.",
+      "indicadores_transcripcion": [
+        "Cliente afirma tener la tarjeta en su poder y nunca haberla prestado ni perdido",
+        "Compras presenciales en comercios fisicos o retiros ATM que el cliente no realizo",
+        "Discrepancia geografica entre la ubicacion del cliente y el punto de venta"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "POS",
+          "ATM"
+        ],
+        "entry_modes": [
+          "Banda",
+          "Chip",
+          "Fallback"
+        ],
+        "patron_frecuente": "Transacciones consecutivas en comercios fisicos sin presencia fisica real"
+      },
+      "accion_recomendada": "Bloqueo preventivo de tarjeta, reemision con chip dinamico y revision de terminales POS frecuentados.",
+      "ejemplo_blindaje": "IF ACF_ENTRY_MODE IN ('MAG_STRIPE','FALLBACK') AND DISTANCE(ACF_GEO, CUSTOMER_GEO) > 50 THEN REQUIRE_BLOCK",
+      "categoria": "COMPROMISO_TARJETA",
+      "riesgo_base": "ALTO",
+      "equivalencias_poc": [
+        "T10"
+      ],
+      "frases_cliente": [
+        "tengo mi tarjeta conmigo",
+        "nunca la presté",
+        "son compras en otra ciudad",
+        "no he perdido la tarjeta"
+      ],
+      "diferenciar_de": {
+        "robo_perdida_tarjeta": "En la tarjeta clonada el cliente conserva la tarjeta física; en robo o pérdida ya no la tiene.",
+        "comercio_comprometido": "Si el cliente señala un comercio concreto donde compró antes y sospecha que ahí le robaron los datos, es comercio comprometido aunque el cargo sea presencial con banda o fallback (la copia es la consecuencia). Es tarjeta clonada cuando no hay un comercio previo identificado como origen y la evidencia apunta a un skimmer o a una copia física."
+      }
+    },
+    "phishing_vishing": {
+      "nombre": "Phishing / Vishing / Smishing",
+      "definicion": "El cliente fue inducido mediante engano (llamada falsa de un supuesto asesor, SMS con enlace fraudulento, web clonada) a entregar sus claves secretas, numeros de tarjeta o codigos OTP.",
+      "indicadores_transcripcion": [
+        "Menciona llamada previa de supuesta area de seguridad o soporte del banco",
+        "Ingreso a enlace recibido por SMS o correo solicitando actualizar datos",
+        "Proporciono codigo de confirmacion recibido por SMS pensando que cancelaba una compra"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "INT",
+          "APP",
+          "WEB"
+        ],
+        "indicador_ecommerce": "S",
+        "patron_frecuente": "Transaccion e-commerce de alto valor poco despues de interaccion en canal digital"
+      },
+      "accion_recomendada": "Reforzar autenticacion 3DS biometrica, invalidar sesiones activas y concientizacion sobre no compartir OTP.",
+      "ejemplo_blindaje": "IF ACF_CANAL IN ('INT','WEB') AND OTP_GENERATED_RECENTLY AND ACF_MONTO > 500 THEN REQUIRE_BIOMETRIC_STEP_UP",
+      "categoria": "ING_SOCIAL",
+      "riesgo_base": "ALTO",
+      "equivalencias_poc": [
+        "T01",
+        "T02",
+        "T03",
+        "T04",
+        "T09",
+        "T20"
+      ],
+      "frases_cliente": [
+        "me llamaron del banco",
+        "me dijeron que había un consumo raro",
+        "le di el código que me llegó",
+        "me llegó un mensaje",
+        "entré al link",
+        "puse mis datos en la página",
+        "me llegó un correo",
+        "me escribieron por WhatsApp",
+        "busqué el número en Google",
+        "me dijeron que mis puntos vencían"
+      ],
+      "diferenciar_de": {
+        "sim_swap": "En phishing/vishing el cliente entregó el código o la clave por engaño; en SIM swap nunca recibió el código porque su celular se quedó sin señal.",
+        "toma_de_cuenta": "Si el cliente entregó sus credenciales por engaño y después operaron su app, la modalidad es phishing/vishing (el origen). Es toma de cuenta cuando no hubo un engaño identificado y el cliente simplemente perdió el acceso o ve un dispositivo nuevo.",
+        "comercio_comprometido": "En comercio comprometido nadie contactó al cliente ni le pidió datos."
+      }
+    },
+    "robo_perdida_tarjeta": {
+      "nombre": "Robo o Perdida de Tarjeta Fisica",
+      "definicion": "Uso no autorizado de la tarjeta fisica tras haber sido sustraida, hurtada o extraviada por el titular antes de que este pudiera reportar el bloqueo.",
+      "indicadores_transcripcion": [
+        "Cliente reporta que le robaron la billetera o perdio su bolso/tarjeta",
+        "Se percata de consumos realizados horas antes o inmediatamente despues del evento delictivo",
+        "Consumos rapidos en comercios de conveniencia o grifos"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "POS",
+          "ATM"
+        ],
+        "entry_modes": [
+          "Contactless",
+          "Chip"
+        ],
+        "patron_frecuente": "Rafaga de transacciones consecutivas de montos moderados por debajo del umbral de PIN (contactless)"
+      },
+      "accion_recomendada": "Bloqueo definitivo de tarjeta por sustraccion, reemision y limite acumulativo de transacciones contactless sin PIN.",
+      "ejemplo_blindaje": "IF ACF_ENTRY_MODE='CONTACTLESS' AND COUNT_LAST_1H > 3 AND ACF_MONTO > 150 THEN REQUIRE_PIN",
+      "categoria": "COMPROMISO_TARJETA",
+      "riesgo_base": "MEDIO",
+      "equivalencias_poc": [
+        "T13",
+        "T15"
+      ],
+      "frases_cliente": [
+        "me robaron la billetera",
+        "se me perdió la tarjeta",
+        "bloqueé después",
+        "un señor me ayudó en el cajero",
+        "la tarjeta que tengo no es mía"
+      ],
+      "diferenciar_de": {
+        "tarjeta_clonada": "En robo o pérdida el cliente ya no tiene la tarjeta (o le cambiaron la suya en el cajero); en la clonada la conserva."
+      }
+    },
+    "toma_de_cuenta": {
+      "nombre": "Toma de Cuenta (Account Takeover - ATO)",
+      "definicion": "Un tercero no autorizado logra vulnerar o acceder a las credenciales digitales de la banca movil o web del cliente, cambiando datos de contacto o realizando transferencias y disposiciones no autorizadas.",
+      "indicadores_transcripcion": [
+        "Cliente no puede ingresar a su app o banca movil ('clave incorrecta')",
+        "Llegaron notificaciones de cambio de clave, correo o numero de telefono no solicitadas",
+        "Transferencias masivas a cuentas desconocidas o prestamos desembolsados en linea"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "APP",
+          "WEB"
+        ],
+        "patron_frecuente": "Dispositivo nuevo (Device ID desconocido), cambio de contrasena previo a transferencias de alto valor"
+      },
+      "accion_recomendada": "Congelamiento temporal de accesos digitales, desvinculacion de dispositivos desconocidos y reseteo presencial de credenciales.",
+      "ejemplo_blindaje": "IF DEVICE_CHANGE_FLAG='S' AND TIME_SINCE_PASSWORD_CHANGE < 24H AND ACF_MONTO > 1000 THEN SUSPEND_TRX",
+      "categoria": "COMPROMISO_DISPOSITIVO",
+      "riesgo_base": "CRITICO",
+      "equivalencias_poc": [
+        "T07",
+        "T08",
+        "T14",
+        "T21"
+      ],
+      "frases_cliente": [
+        "no puedo entrar a mi app",
+        "me cambiaron la clave",
+        "me hicieron descargar una aplicación",
+        "manejaban mi celular",
+        "me robaron el celular",
+        "aparece un dispositivo que no es mío",
+        "sacaron un préstamo"
+      ],
+      "diferenciar_de": {
+        "sim_swap": "En SIM swap el síntoma es que el celular se quedó sin señal; en toma de cuenta el cliente conserva su línea pero pierde el acceso a la app o aparece un dispositivo nuevo.",
+        "phishing_vishing": "Si hubo un engaño previo (llamada, SMS, correo) donde el cliente entregó datos, la modalidad es phishing/vishing."
+      }
+    },
+    "suscripcion_no_autorizada": {
+      "nombre": "Suscripcion No Autorizada / Cargo Recurrente Oculto",
+      "definicion": "Cobros automaticos recurrentes de comercios en linea derivados de periodos de prueba gratuitos o politicas opacas que el cliente no autorizo de manera consciente o intento cancelar sin exito.",
+      "indicadores_transcripcion": [
+        "Cliente menciona cobro mensual recurrente de servicio de streaming, software o gimnasio que no usa",
+        "Indica que solo puso la tarjeta para una prueba gratuita de 7 dias",
+        "Cobro periodico de montos exactos y pequenos en moneda extranjera o local"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "INT"
+        ],
+        "indicador_ecommerce": "S",
+        "patron_frecuente": "Transacciones periodicas (mismo dia de cada mes) en el mismo comercio"
+      },
+      "accion_recomendada": "Bloqueo de token recurrente de dicho comercio y asesoramiento para cancelacion formal.",
+      "ejemplo_blindaje": "IF ACF_RECURRENT_FLAG='S' AND CUSTOMER_DISPUTED_FLAG='S' THEN BLOCK_MERCHANT_TOKEN",
+      "categoria": "AUTORIZADO_ENGANO",
+      "riesgo_base": "BAJO",
+      "equivalencias_poc": [
+        "NF04"
+      ],
+      "frases_cliente": [
+        "me cobran todos los meses",
+        "solo era una prueba gratis",
+        "intenté cancelar y me siguen cobrando"
+      ],
+      "diferenciar_de": {
+        "no_fraude": "Si el cliente reconoce que se suscribió y solo olvidó cancelar, es no fraude (NF04).",
+        "comercio_comprometido": "Varios cobros muy pequeños en comercios desconocidos seguidos de uno mayor son pruebas de tarjeta con datos robados, no una suscripción."
+      }
+    },
+    "fraude_amigable": {
+      "nombre": "Fraude Amigable (Friendly Fraud / Familiar)",
+      "definicion": "La transaccion fue efectuada por un miembro del circulo cercano del titular (hijos, pareja, familiares) con acceso al dispositivo o tarjeta, sin mediar un delincuente externo.",
+      "indicadores_transcripcion": [
+        "Cargos en tiendas de videojuegos (Google Play, PlayStation, Apple, Steam, Roblox)",
+        "Dispositivo registrado en el hogar del titular",
+        "Cliente descubre o sospecha que un familiar pudo haber realizado la compra"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "INT",
+          "APP"
+        ],
+        "categorias_comercio": [
+          "Juegos",
+          "Entretenimiento",
+          "App Store"
+        ],
+        "patron_frecuente": "Multiples micropagos en plataformas digitales de juegos desde IP domestica"
+      },
+      "accion_recomendada": "Explicacion al cliente de la naturaleza del consumo, activacion de controles parentales y rechazo de cobertura de contracargo por dolo/negligencia familiar.",
+      "ejemplo_blindaje": "IF ACF_MCC IN ('GAMES','DIGITAL_GOODS') AND REPEATED_TXN_APP_STORE THEN NOTIFY_PARENTAL_ALERT",
+      "categoria": "ENTORNO_CERCANO",
+      "riesgo_base": "BAJO",
+      "equivalencias_poc": [
+        "NF03"
+      ],
+      "frases_cliente": [
+        "creo que fue mi hijo",
+        "mi pareja tenía la tarjeta",
+        "son compras de videojuegos",
+        "alguien de mi casa usó el celular"
+      ],
+      "diferenciar_de": {
+        "no_fraude": "Si el familiar estaba autorizado a usar la tarjeta o el cliente termina reconociendo la compra, es no fraude (NF03)."
+      }
+    },
+    "sim_swap": {
+      "nombre": "SIM Swap (Suplantacion de Tarjeta SIM)",
+      "definicion": "El atacante clona o transfiere la linea telefonica del cliente ante la empresa de telecomunicaciones para interceptar los mensajes de validacion (SMS OTP) y autorizar operaciones fraudulentas.",
+      "indicadores_transcripcion": [
+        "Cliente indica que su celular se quedo 'sin servicio' o 'solo llamadas de emergencia' horas antes del fraude",
+        "Operaciones bancarias aprobadas con token SMS que el cliente nunca vio ni recibio",
+        "Se entero del fraude al conectarse al Wi-Fi o recuperar la senal de su linea"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "INT",
+          "APP",
+          "WEB"
+        ],
+        "patron_frecuente": "Operaciones con OTP SMS coincidiendo con ventana de cambio reciente de SIM segun Telco API"
+      },
+      "accion_recomendada": "Integracion con API de telcos para validacion de IMSI/SIM age antes de autorizar transferencias de alto riesgo.",
+      "ejemplo_blindaje": "IF TELCO_SIM_AGE < 48H AND ACF_CANAL IN ('INT','APP') THEN REQUIRE_PUSH_AUTH",
+      "categoria": "COMPROMISO_DISPOSITIVO",
+      "riesgo_base": "CRITICO",
+      "equivalencias_poc": [
+        "T05"
+      ],
+      "frases_cliente": [
+        "mi celular se quedó sin señal",
+        "el operador me dijo que pidieron un duplicado",
+        "no me llegaban mensajes",
+        "solo podía hacer llamadas de emergencia"
+      ],
+      "diferenciar_de": {
+        "phishing_vishing": "En SIM swap el cliente nunca vio el código: no lo entregó, se lo interceptaron."
+      }
+    },
+    "comercio_comprometido": {
+      "nombre": "Comercio Comprometido (Merchant Data Breach)",
+      "definicion": "Fuga o sustraccion masiva de datos de tarjetas en una pasarela de pago o base de datos de un comercio donde el cliente realizo compras legitimas semanas o meses antes.",
+      "indicadores_transcripcion": [
+        "Cliente no reconoce consumos en comercios lejanos pero recuerda haber comprado en una tienda especifica recientemente",
+        "No compartio claves ni recibio llamadas sospechosas",
+        "Multiples clientes de una misma zona o comercio presentan el mismo tipo de cargo no reconocido"
+      ],
+      "indicadores_transaccionales": {
+        "canales": [
+          "INT",
+          "POS"
+        ],
+        "patron_frecuente": "Clientes distintos con compras no reconocidas comparten un mismo comercio previo legitimo comun (CPP - Common Point of Purchase)"
+      },
+      "accion_recomendada": "Marcado del comercio para auditoria de seguridad PCI-DSS y reemision de tarjetas de la cartera expuesta.",
+      "ejemplo_blindaje": "IF ACF_MERCHANT_CPP_BREACH_FLAG='S' THEN FORCE_CARD_REISSUANCE",
+      "categoria": "COMPROMISO_TARJETA",
+      "riesgo_base": "MEDIO",
+      "equivalencias_poc": [
+        "T11",
+        "T16"
+      ],
+      "frases_cliente": [
+        "no reconozco esa compra",
+        "nadie me llamó",
+        "es una página que no conozco",
+        "fui a una tienda y después aparecieron cargos",
+        "creo que ahí me robaron los datos"
+      ],
+      "diferenciar_de": {
+        "tarjeta_clonada": "Si hay un comercio previo identificado como origen del robo de datos (punto de compra común), es comercio comprometido aunque el cargo fraudulento sea presencial.",
+        "phishing_vishing": "Aquí no hubo contacto previo con el cliente ni entregó datos."
+      }
+    },
+    "no_identificado": {
+      "nombre": "No Identificado / Informacion Insuficiente",
+      "definicion": "El caso carece de elementos probatorios o detalles suficientes en la transcripcion y data transaccional para determinar la modalidad tecnica con certeza.",
+      "indicadores_transcripcion": [
+        "Llamada cortada o transcripcion incompleta",
+        "El cliente no aporta datos de montos, fechas o circunstancias del hecho",
+        "Reclamo confuso sin relacion clara con transacciones registradas"
+      ],
+      "indicadores_transaccionales": {},
+      "accion_recomendada": "Contactar al cliente para levantamiento detallado de informacion y evidencia adicional.",
+      "ejemplo_blindaje": "IF DETAILS_INSUFFICIENT THEN ROUTE_TO_MANUAL_REVIEW",
+      "categoria": null,
+      "riesgo_base": "MEDIO",
+      "equivalencias_poc": [],
+      "frases_cliente": [],
+      "diferenciar_de": {
+        "nueva_modalidad": "Úsalo solo si la información no alcanza. Si el caso es claro pero no calza con ninguna modalidad, tipifica con la más cercana y marca el estado como 'Nueva'."
+      }
+    }
+  },
+  "no_fraude": [
+    {
+      "id": "NF01",
+      "nombre": "Consumo legítimo no reconocido",
+      "senales": [
+        "nombre de comercio distinto al comercial",
+        "cliente recuerda al revisar"
+      ],
+      "accion": "Explicar descriptor del comercio y cerrar"
+    },
+    {
+      "id": "NF02",
+      "nombre": "Controversia comercial",
+      "senales": [
+        "producto defectuoso",
+        "no entregado por comercio formal",
+        "cancelación no aplicada"
+      ],
+      "accion": "Derivar a contracargo por motivo comercial"
+    },
+    {
+      "id": "NF03",
+      "nombre": "Uso por familiar o autorizado",
+      "senales": [
+        "familiar tenía la tarjeta",
+        "'mi hijo usó la tarjeta'"
+      ],
+      "accion": "Cerrar como no fraude, documentar"
+    },
+    {
+      "id": "NF04",
+      "nombre": "Suscripción o cargo recurrente olvidado",
+      "senales": [
+        "mismo monto mensual",
+        "servicio de streaming o app"
+      ],
+      "accion": "Orientar a cancelar con el comercio"
+    },
+    {
+      "id": "NF05",
+      "nombre": "Cargo duplicado o error de procesamiento",
+      "senales": [
+        "dos cargos idénticos mismo minuto",
+        "reversión pendiente"
+      ],
+      "accion": "Derivar a operaciones"
+    }
+  ],
+  "reglas_tipificacion": [
+    "Asignar una sola modalidad principal.",
+    "Tipificar por el origen del compromiso, no por cómo se usó después la tarjeta o la cuenta.",
+    "Si el cliente hizo o autorizó la operación, o la reconoce durante la llamada, es no fraude: indicar cuál de los casos NF aplica.",
+    "Si ninguna modalidad calza, tipificar con la más cercana y marcar el estado como 'Nueva' (candidato a nueva modalidad).",
+    "Si falta la transacción o la transcripción no se entiende, decirlo en lugar de adivinar.",
+    "Toda tipificación debe citar evidencia textual de la llamada y al menos un dato transaccional."
+  ]
+}

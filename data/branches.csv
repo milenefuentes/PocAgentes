@@ -1,0 +1,13 @@
+branch_id,branch_name,city,state,opened_date,ifsc_code
+1,Agencia Arequipa 1,Arequipa,Arequipa,2019-05-06,SBK-ARE-001
+2,Agencia Trujillo 2,Trujillo,La Libertad,2007-07-02,SBK-TRU-002
+3,Agencia Chiclayo 3,Chiclayo,Lambayeque,2005-07-24,SBK-CHI-003
+4,Agencia Piura 4,Piura,Piura,2021-08-19,SBK-PIU-004
+5,Agencia Cusco 5,Cusco,Cusco,2011-03-04,SBK-CUS-005
+6,Agencia Iquitos 6,Iquitos,Loreto,2010-06-30,SBK-IQU-006
+7,Agencia Huancayo 7,Huancayo,Junin,2010-01-03,SBK-HUA-007
+8,Agencia Tacna 8,Tacna,Tacna,2008-02-18,SBK-TAC-008
+9,Agencia Chimbote 9,Chimbote,Ancash,2021-07-09,SBK-CHI-009
+10,Agencia Ica 10,Ica,Ica,2007-04-20,SBK-ICA-010
+11,Agencia Puno 11,Puno,Puno,2020-03-06,SBK-PUN-011
+12,Agencia Lima 12,Lima,Lima,2021-08-12,SBK-LIM-012

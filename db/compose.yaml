@@ -1,0 +1,23 @@
+# Base de datos local (plan B si no hay acceso a Neon).
+# El contenedor ya existe: basta con `podman start postgres-agents`.
+# Para crearlo desde cero (requiere un proveedor de compose), desde la raíz del proyecto:
+#   podman compose --env-file .env.local -f db/compose.yaml up -d
+# El nombre fijo del proyecto conserva el volumen existente (claude-agents_postgres_data).
+name: claude-agents
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres-agents
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

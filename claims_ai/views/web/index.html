@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern Investigator | Portal de validación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-theme">
+  <div class="app-layout">
+    
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+                <a class="brand" href="#resumen" title="Inicio">
+          <span class="logo-square"><span class="logo-accent">PI</span></span>
+          <span class="brand-texto"><strong>PATTERN INVESTIGATOR</strong><small>Investigador de Patrones</small></span>
+        </a>
+
+        <nav class="sidebar-nav">
+          <span class="nav-seccion">Análisis</span>
+          <button class="nav-item active" data-vista="resumen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span class="nav-label">Resumen</span>
+          </button>
+          <button class="nav-item" data-vista="reclamos">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span class="nav-label">Casos analizados</span>
+          </button>
+          <button class="nav-item" data-vista="patrones">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span class="nav-label">Patrones e hipótesis</span>
+          </button>
+          <button class="nav-item" data-vista="red">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg><span class="nav-label">Grafo de relaciones</span>
+          </button>
+          <button class="nav-item" data-vista="calidad">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg><span class="nav-label">Calidad del Agente 1</span>
+          </button>
+        </nav>
+
+        <nav class="sidebar-nav">
+          <button class="nav-item" data-vista="config">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span class="nav-label">Configuración</span>
+          </button>
+        </nav>
+
+        <nav class="sidebar-nav">
+          <span class="nav-seccion">Reportes (Excel)</span>
+          <a class="nav-item" href="/api/export?tipo=casos" download><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span class="nav-label">Casos</span></a>
+          <a class="nav-item" href="/api/export?tipo=patrones" download><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span class="nav-label">Patrones</span></a>
+          <a class="nav-item" href="/api/export?tipo=decisiones" download><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg><span class="nav-label">Decisiones</span></a>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <span class="status-indicator-dot online"></span>
+        <span class="sidebar-estado" id="db-source-name">Conectando…</span>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- BARRA SUPERIOR: MIGAS DE PAN Y BÚSQUEDA -->
+      <header class="top-header">
+        <nav class="migas" id="migas" aria-label="Ruta"></nav>
+        <div class="header-right">
+          <label class="buscador-global">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="search" id="busqueda-global" placeholder="Buscar caso (n.º de llamada), comercio…">
+          </label>
+          <div class="usuario-chip" title="Analista que firma las decisiones">
+            <span class="usuario-avatar">AF</span>
+            <span class="usuario-nombre">Analista de Fraude</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENEDOR PRINCIPAL: RESULTADOS DEL MVP -->
+      <section class="portal-container" id="seccion-dashboard">
+        
+        <!-- TÍTULO DE SECCIÓN -->
+        <div class="section-banner" id="banner-vista">
+          <div class="section-title-wrap">
+                        <h2 class="portal-main-heading" id="titulo-vista">Resumen</h2>
+            <p class="vista-pregunta" id="pregunta-vista">¿Qué encontró el sistema?</p>
+          </div>
+          <div class="section-actions">
+            <span class="ultima-act" id="ultima-act"></span>
+            <button class="btn-refresh" id="btn-reload" title="Recargar datos de la BD">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              <span>Actualizar Datos</span>
+            </button>
+          </div>
+        </div>
+
+
+        <!-- VISTA 1: RESUMEN -->
+        <div class="vista" data-vista="resumen">
+        <!-- INDICADORES -->
+        <div class="kpi2-grid">
+          <div class="kpi2">
+            <span class="kpi2-ico azul"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
+            <div class="kpi2-cuerpo">
+              <span class="kpi2-etq">Casos analizados</span>
+              <span class="kpi2-valor" id="k-casos">—</span>
+              <span class="kpi2-sub" id="k-casos-sub">—</span>
+            </div>
+            <div class="kpi2-mini" id="k-casos-mini"></div>
+          </div>
+          <div class="kpi2">
+            <span class="kpi2-ico verde"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="12" cy="6" r="3"/><line x1="10.5" y1="8.6" x2="7.5" y2="15.4"/><line x1="13.5" y1="8.6" x2="16.5" y2="15.4"/></svg></span>
+            <div class="kpi2-cuerpo">
+              <span class="kpi2-etq">Patrones nuevos</span>
+              <span class="kpi2-valor" id="k-nuevos">—</span>
+              <span class="kpi2-sub" id="k-nuevos-sub">—</span>
+            </div>
+            <div class="kpi2-mini" id="k-nuevos-mini"></div>
+          </div>
+          <div class="kpi2">
+            <span class="kpi2-ico azul"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span>
+            <div class="kpi2-cuerpo">
+              <span class="kpi2-etq">Pendientes de validar</span>
+              <span class="kpi2-valor" id="k-pendientes">—</span>
+              <span class="kpi2-sub" id="k-pendientes-sub">—</span>
+            </div>
+            <div class="kpi2-mini" id="k-pendientes-mini"></div>
+          </div>
+          <div class="kpi2">
+            <span class="kpi2-ico verde"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="15"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
+            <div class="kpi2-cuerpo">
+              <span class="kpi2-etq">Casos incompletos</span>
+              <span class="kpi2-valor" id="k-incompletos">—</span>
+              <span class="kpi2-sub" id="k-incompletos-sub">—</span>
+            </div>
+            <div class="kpi2-mini" id="k-incompletos-mini"></div>
+          </div>
+        </div>
+
+        <!-- ESTADO DE LA EJECUCIÓN -->
+        <div class="ejecucion" id="ejecucion"></div>
+
+        <!-- CASOS POR MES + PATRONES DE LA CORRIDA -->
+        <div class="resumen-fila">
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">Casos por periodo</h3>
+              <select class="form-input-sm" id="periodo-casos">
+                <option value="6">Últimos 6 meses</option>
+                <option value="12">Últimos 12 meses</option>
+                <option value="0">Todo el periodo (por trimestre)</option>
+              </select>
+            </div>
+            <div class="columnas" id="grafico-meses"></div>
+            <p class="casos-ayuda">Reclamos analizados por la IA según el mes de la llamada. Clic en una barra para ver esos casos.</p>
+          </div>
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">Patrones de la corrida</h3>
+              <span class="card-badge-type" id="tabla-corrida-nota">—</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table tabla-corrida">
+                <thead><tr><th>Patrón</th><th>Casos</th><th>Impacto (S/)</th><th>Confianza</th><th>Estado</th></tr></thead>
+                <tbody id="tbody-corrida"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONCLUSIÓN PRINCIPAL (lenguaje de negocio, calculada con los datos) -->
+        <div class="hallazgo-card" id="hallazgo-principal" hidden>
+          <div class="hallazgo-icono">!</div>
+          <div class="hallazgo-cuerpo">
+            <span class="hallazgo-etiqueta">Hallazgo principal</span>
+            <p class="hallazgo-titulo" id="hallazgo-titulo"></p>
+            <p class="hallazgo-texto" id="hallazgo-texto"></p>
+            <p class="hallazgo-reco" id="hallazgo-reco"></p>
+          </div>
+          <button class="btn-primary hallazgo-btn" id="hallazgo-btn">Ver el detalle</button>
+        </div>
+        <p class="resumen-dinero" id="resumen-dinero"></p>
+
+        <!-- GRID PRINCIPAL DE CONTENIDO: 2 COLUMNAS -->
+        <!-- EMBUDO DEL PROCESO: QUÉ DATOS RECORRIÓ LA IA -->
+        <div class="content-card embudo-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h3 class="card-title">Recorrido de los datos</h3>
+              <span class="card-badge-count" id="embudo-corrida">—</span>
+            </div>
+            <span class="card-badge-type">De la llamada de reclamo a la hipótesis validada</span>
+          </div>
+          <div class="embudo" id="embudo"></div>
+          <p class="embudo-nota" id="embudo-memoria"></p>
+        </div>
+
+        <!-- GRÁFICOS: MONTO POR PATRÓN Y RECLAMOS POR TIPO DE FRAUDE -->
+        <div class="graficos-grid">
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">Monto involucrado por patrón</h3>
+              <span class="card-badge-type">S/ en reclamos de cada patrón · prioridad entre paréntesis</span>
+            </div>
+            <div class="barras" id="grafico-patrones"></div>
+          </div>
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">Reclamos por tipo de fraude</h3>
+              <span class="card-badge-type">Según la clasificación del Agente 1</span>
+            </div>
+            <div class="barras" id="grafico-tipos"></div>
+          </div>
+        </div>
+        
+        </div>
+        <div class="tooltip-grafico" id="tooltip-grafico" hidden></div>
+
+        <!-- VISTA 2: PATRONES E HIPÓTESIS -->
+        <div class="vista" data-vista="patrones" hidden>
+          <div class="vista-columna">
+            <div class="filtro-sintesis" id="filtro-sintesis">
+              <span class="filtro-sintesis-etq">Mostrar:</span>
+              <button class="chip-filtro activo" data-sintesis="">Todos</button>
+              <button class="chip-filtro" data-sintesis="Nuevo">Nuevos · requieren decisión</button>
+              <button class="chip-filtro" data-sintesis="Conocido">Conocidos</button>
+              <button class="chip-filtro" data-sintesis="Bajo umbral">Bajo umbral</button>
+              <span class="casos-ayuda filtro-sintesis-nota">Según la propuesta, solo los patrones nuevos le llegan al analista
+                para decidir; los conocidos y los de bajo umbral quedan registrados (puedes revisarlos igual).</span>
+            </div>
+            <!-- TARJETA 1: PATRONES DESTACADOS -->
+            <div class="content-card" id="seccion-patrones">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3 class="card-title">Patrones Destacados</h3>
+                  <span class="card-badge-count" id="count-patrones-badge">—</span>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" id="tabla-patrones">
+                  <thead>
+                    <tr>
+                      <th style="width: 8%;">Patrón</th>
+                      <th style="width: 44%;">Descripción</th>
+                      <th style="width: 12%;">Reclamos</th>
+                      <th style="width: 12%;">Confianza</th>
+                      <th style="width: 12%;">Impacto</th>
+                      <th style="width: 12%;">Prioridad</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-patrones">
+                    <!-- Filas generadas dinámicamente -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TARJETA 2: HIPÓTESIS PROPUESTAS -->
+            <div class="content-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <h3 class="card-title">Hipótesis Propuestas</h3>
+                  <span class="card-badge-count purple">Validación Humana</span>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" id="tabla-hipotesis">
+                  <thead>
+                    <tr>
+                      <th style="width: 8%;">ID</th>
+                      <th style="width: 40%;">Descripción</th>
+                      <th style="width: 12%;">Confianza</th>
+                      <th style="width: 12%;">Prioridad</th>
+                      <th style="width: 28%;">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-hipotesis">
+                    <!-- Filas generadas dinámicamente -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TARJETA 5: VALIDACIÓN HUMANA (HUMAN-IN-THE-LOOP) -->
+            <div class="content-card validation-box">
+              <div class="validation-content">
+                <div class="val-header">
+                  <span class="val-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </span>
+                  <h4 class="val-title">Validación Humana</h4>
+                </div>
+                <p class="val-desc">El analista revisa hipótesis y patrones, valida la calidad de los hallazgos y decide si procede a investigación profunda en la siguiente fase.</p>
+                <div class="val-action">
+                  <button class="btn-validate" id="btn-open-global-val">Validar / Comentar</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- VISTA 3: GRAFO DE RELACIONES (lámina 78, pantalla 6) -->
+        <div class="vista" data-vista="red" hidden>
+          <div class="grafo-layout">
+            <div class="content-card grafo-card">
+              <h3 class="card-title">Grafo de relaciones</h3>
+              <div class="g-filtros">
+                <label class="g-filtro"><span>Periodo</span>
+                  <select class="form-input-sm" id="g-periodo">
+                    <option value="0">Todo el periodo</option>
+                    <option value="30">Últimos 30 días</option>
+                    <option value="90">Últimos 90 días</option>
+                    <option value="180">Últimos 180 días</option>
+                    <option value="365">Último año</option>
+                  </select></label>
+                <label class="g-filtro"><span>Tipología</span>
+                  <select class="form-input-sm" id="g-tipologia"><option value="">Todas las tipologías</option></select></label>
+                <label class="g-filtro"><span>Patrón</span>
+                  <select class="form-input-sm" id="g-patron"><option value="">Todos los casos</option></select></label>
+              </div>
+              <div class="g-kpis">
+            <div class="g-kpi"><span class="kpi2-ico azul"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="12" cy="20" r="2"/></svg></span>
+              <div><span class="g-kpi-etq">Nodos mostrados</span><span class="g-kpi-valor" id="g-nodos">—</span></div></div>
+            <div class="g-kpi"><span class="kpi2-ico verde"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="12" cy="6" r="3"/><line x1="10.5" y1="8.6" x2="7.5" y2="15.4"/><line x1="13.5" y1="8.6" x2="16.5" y2="15.4"/></svg></span>
+              <div><span class="g-kpi-etq">Conexiones</span><span class="g-kpi-valor" id="g-conexiones">—</span></div></div>
+            <div class="g-kpi"><span class="kpi2-ico azul"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+              <div><span class="g-kpi-etq">Casos en la vista</span><span class="g-kpi-valor" id="g-casos">—</span></div></div>
+            <div class="g-kpi"><span class="kpi2-ico azul"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <div><span class="g-kpi-etq">Comercio principal</span><span class="g-kpi-valor" id="g-principal">—</span></div></div>
+              </div>
+              <div class="g-lienzo"><svg id="g-svg" viewBox="-90 -10 1180 690" preserveAspectRatio="xMidYMid meet" role="img"
+                aria-label="Grafo de relaciones"></svg></div>
+              <div class="g-leyenda">
+                <span><i class="g-punto comercio"></i> Comercios</span>
+                <span><i class="g-punto canal"></i> Canales</span>
+                <span><i class="g-punto ciudad"></i> Ciudades <em class="sin-dato">(país no disponible en la base)</em></span>
+                <span><i class="g-punto tipologia"></i> Tipologías de fraude</span>
+                <span class="g-grosor">Grosor de la línea = volumen de casos · clic en un nodo para centrarlo</span>
+              </div>
+            </div>
+
+            <div class="content-card g-panel">
+              <h3 class="card-title">Detalle del nodo</h3>
+              <div id="g-detalle"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA 4: RECLAMOS (AGENTE 1) -->
+        <div class="vista" data-vista="reclamos" hidden>
+        <!-- CASOS ANALIZADOS POR EL AGENTE 1 -->
+        <div class="content-card casos-card" id="seccion-casos">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h3 class="card-title">Casos analizados por la IA (Agente 1)</h3>
+              <span class="card-badge-count" id="casos-badge">—</span>
+            </div>
+            <div class="casos-filtros">
+              <input type="text" class="form-input-sm" id="casos-buscar" placeholder="Buscar llamada, comercio…">
+              <span class="filtro-mes" id="casos-filtro-mes" hidden></span>
+              <select class="form-input-sm" id="casos-filtro-modalidad">
+                <option value="">Todas las modalidades</option>
+              </select>
+              <select class="form-input-sm" id="casos-filtro-riesgo">
+                <option value="">Todo riesgo</option>
+                <option value="Alto">Riesgo alto</option>
+                <option value="Medio">Riesgo medio</option>
+                <option value="Bajo">Riesgo bajo</option>
+              </select>
+              <select class="form-input-sm" id="casos-filtro-variante">
+                <option value="">Toda variante</option>
+                <option value="1">1 · Fraude con tipología</option>
+                <option value="2">2 · No fraude</option>
+                <option value="3">3 · Caso incompleto</option>
+                <option value="4">4 · Sin tipología</option>
+                <option value="5">5 · Transcripción ilegible</option>
+              </select>
+              <label class="filtro-fecha">Desde <input type="date" class="form-input-sm" id="casos-desde"></label>
+              <label class="filtro-fecha">Hasta <input type="date" class="form-input-sm" id="casos-hasta"></label>
+            </div>
+          </div>
+          <p class="casos-ayuda">Haz clic en un caso para abrir su ficha completa, revisarla y confirmar o corregir la tipología.</p>
+          <div class="table-responsive casos-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Caso</th>
+                  <th>Tipificación IA</th>
+                  <th>Modalidad real</th>
+                  <th>Confianza</th>
+                  <th>Riesgo</th>
+                  <th title="Las 5 situaciones de la ficha según la propuesta">Variante</th>
+                  <th>Revisión</th>
+                  <th>Monto</th>
+                  <th>Comercio</th>
+                  <th>Canal / Lectura</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-casos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- VISTA 5: CALIDAD (AGENTE 1) -->
+        <div class="vista" data-vista="calidad" hidden>
+        <!-- CALIDAD DEL AGENTE 1: MÉTRICAS Y MATRIZ DE CONFUSIÓN -->
+        <div class="content-card calidad-card" id="seccion-calidad">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h3 class="card-title">Calidad del Agente 1</h3>
+              <span class="card-badge-count" id="calidad-badge">—</span>
+            </div>
+            <span class="card-badge-type">Tipificación de la IA frente a la modalidad real de cada reclamo</span>
+          </div>
+          <div class="calidad-kpis" id="calidad-kpis"></div>
+          <p class="calidad-nota">Todas las llamadas son reclamos de fraude, así que aquí un <strong>falso positivo</strong> es un
+            reclamo que la IA asignó a una modalidad siendo de otra, y un <strong>falso negativo</strong> es un reclamo de esa
+            modalidad que la IA clasificó como otra. <strong>Precisión</strong>: de lo que la IA llamó así, cuánto era correcto.
+            <strong>Recall</strong>: de los casos reales, cuántos encontró.</p>
+          <p class="calidad-hallazgo" id="calidad-hallazgo"></p>
+          <div class="calidad-grid">
+            <div>
+              <h4 class="m-sec-title">Métricas por modalidad</h4>
+              <div class="table-responsive">
+                <table class="data-table tabla-compacta tabla-metricas">
+                  <thead>
+                    <tr><th>Modalidad</th><th title="Casos reales">Reales</th><th>Aciertos</th><th title="Falsos positivos">Falsos +</th>
+                        <th title="Falsos negativos">Falsos −</th><th>Precisión</th><th>Recall</th><th>F1</th></tr>
+                  </thead>
+                  <tbody id="tbody-metricas"></tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <h4 class="m-sec-title">Matriz de confusión</h4>
+              <p class="casos-ayuda">Filas: modalidad real · Columnas: lo que dijo la IA. La diagonal son los aciertos.</p>
+              <div class="table-responsive" id="matriz-confusion"></div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- VISTA 8: DETALLE DE UN PATRÓN (validación analítica) -->
+        <div class="vista" data-vista="patron" hidden>
+          <a class="volver" href="#patrones">← Patrones e hipótesis</a>
+          <div class="patron-top">
+            <h2 class="caso-titulo patron-titulo" id="pp-titulo">Patrón</h2>
+            <p class="caso-meta" id="pp-sub">Detalle del patrón detectado y revisión para validación analítica</p>
+            <div class="caso-chips" id="pp-chips"></div>
+          </div>
+
+          <div class="patron-grid">
+            <div class="patron-col">
+              <div class="content-card">
+                <h3 class="card-title">Evidencia del patrón</h3>
+                <div class="patron-hipotesis-box" id="pp-hipotesis-box">
+                  <div class="hipotesis-tag">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <span>Hipótesis formulada</span>
+                  </div>
+                  <p class="hipotesis-texto" id="pp-hipotesis-texto"></p>
+                </div>
+                <div class="kpi2-grid tres">
+                  <div class="kpi2">
+                    <span class="kpi2-ico azul"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
+                    <div class="kpi2-cuerpo">
+                      <span class="kpi2-etq">Casos detectados</span>
+                      <span class="kpi2-valor" id="pp-casos">—</span>
+                      <span class="kpi2-sub" id="pp-casos-sub"></span>
+                    </div>
+                  </div>
+                  <div class="kpi2">
+                    <span class="kpi2-ico verde"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span>
+                    <div class="kpi2-cuerpo">
+                      <span class="kpi2-etq">Impacto estimado</span>
+                      <span class="kpi2-valor" id="pp-impacto">—</span>
+                      <span class="kpi2-sub" id="pp-impacto-sub"></span>
+                    </div>
+                  </div>
+                  <div class="kpi2">
+                    <span class="kpi2-ico azul"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span>
+                    <div class="kpi2-cuerpo">
+                      <span class="kpi2-etq">Confianza</span>
+                      <span class="kpi2-valor" id="pp-conf">—</span>
+                      <span class="kpi2-sub" id="pp-conf-sub"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-card">
+                <h3 class="card-title">Síntesis de negocio</h3>
+                <div class="sintesis-lista" id="pp-sintesis"></div>
+              </div>
+            </div>
+
+            <div class="patron-col">
+              <div class="content-card">
+                <div class="card-header">
+                  <h3 class="card-title">Casos relacionados al patrón</h3>
+                  <button class="link-ver" id="pp-ver-todos"></button>
+                </div>
+                <div class="table-responsive">
+                  <table class="data-table tabla-compacta tabla-ejemplos">
+                    <thead><tr><th>Caso</th><th>Fecha</th><th>Monto</th><th>Ciudad del comercio</th><th>Estado</th></tr></thead>
+                    <tbody id="pp-casos-tabla"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="content-card">
+                <h3 class="card-title">Variables con mayor peso</h3>
+                <p class="casos-ayuda">Cuánto distingue cada variable a este patrón del resto de reclamos (100 % = lo distingue por completo).</p>
+                <div class="pesos" id="pp-variables"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title">Validación del analista</h3>
+              <span class="card-badge-type" id="pp-estado-actual"></span>
+            </div>
+            <label class="form-label" for="pp-comentario">Comentario del analista</label>
+            <textarea class="form-textarea" id="pp-comentario" placeholder="Registrar observaciones, sustento o acciones recomendadas…"></textarea>
+            <div class="val-botones">
+              <button class="btn-val aprobar" data-decision="Validado"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Aprobar</button>
+              <button class="btn-val" data-decision="Descartado"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Rechazar</button>
+              <button class="btn-val" data-decision="En Investigación"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Investigar más</button>
+              <button class="btn-val" data-decision="Comentario"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comentar</button>
+              <a class="btn-val" id="pp-exportar" download><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar casos</a>
+            </div>
+            <p class="rev-error" id="pp-val-error" hidden></p>
+            <p class="cfg-ok" id="pp-val-ok" hidden></p>
+            <h4 class="m-sec-title cp-sub">Historial de decisiones</h4>
+            <div id="pp-historial"></div>
+          </div>
+
+          <details class="content-card detalle-tecnico">
+            <summary>Ver detalle técnico (evidencia estadística, memoria y regla propuesta)</summary>
+            <div class="modal-section historia"><h4 class="m-sec-title">Por qué lo creemos</h4><ul class="lista-porque" id="pp-porque"></ul></div>
+            <div class="modal-section"><h4 class="m-sec-title">Historial en la memoria del sistema</h4><div class="memoria-box" id="pp-memoria"></div></div>
+            <div class="modal-section"><h4 class="m-sec-title">Evidencia estadística completa</h4><p class="m-sec-text" id="pp-evid"></p>
+              <div class="code-box-inline" id="pp-dist"></div></div>
+            <div class="modal-section"><h4 class="m-sec-title">Brechas en las reglas actuales</h4><p class="m-sec-text" id="pp-brechas"></p></div>
+            <div class="modal-section"><h4 class="m-sec-title">Regla de monitoreo propuesta (preliminar)</h4><pre class="code-box" id="pp-regla"></pre></div>
+          </details>
+        </div>
+
+        <!-- VISTA 7: CONFIGURACIÓN (parámetros de negocio y catálogo vigente) -->
+        <div class="vista" data-vista="config" hidden>
+          <div class="config-grid">
+            <div class="content-card">
+              <div class="card-header">
+                <h3 class="card-title">Parámetros de negocio del Agente 2</h3>
+                <span class="card-badge-type">Se aplican en la próxima corrida</span>
+              </div>
+              <div id="cfg-parametros"></div>
+              <div class="cfg-pie">
+                <p class="rev-error" id="cfg-error" hidden></p>
+                <p class="cfg-ok" id="cfg-ok" hidden>Parámetros guardados. El Agente 2 los usará en su próxima corrida.</p>
+                <button class="btn-primary" id="cfg-guardar">Guardar cambios</button>
+              </div>
+            </div>
+            <div class="caso-col-der">
+              <div class="content-card">
+                <h3 class="card-title">Últimas corridas</h3>
+                <div id="cfg-corridas"></div>
+              </div>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="card-header">
+              <h3 class="card-title" id="cfg-catalogo-titulo">Catálogo de modalidades vigente</h3>
+              <span class="card-badge-type" id="cfg-catalogo-nota"></span>
+            </div>
+            <p class="casos-ayuda">Es el Manual de Modalidades contra el que el Agente 1 tipifica cada caso y con el que el
+              Agente 2 decide si un patrón es <strong>conocido</strong> (coincide con una modalidad) o <strong>nuevo</strong>.</p>
+            <div class="table-responsive">
+              <table class="data-table tabla-compacta tabla-catalogo">
+                <thead><tr><th>Modalidad</th><th>Definición y cómo reconocerla</th><th>Acción recomendada</th></tr></thead>
+                <tbody id="cfg-catalogo"></tbody>
+              </table>
+            </div>
+            <h4 class="m-sec-title cp-sub">Casos que no son fraude (ficha 2)</h4>
+            <div class="table-responsive">
+              <table class="data-table tabla-compacta tabla-catalogo">
+                <thead><tr><th>Caso</th><th>Señales</th><th>Qué hacer</th></tr></thead>
+                <tbody id="cfg-no-fraude"></tbody>
+              </table>
+            </div>
+            <h4 class="m-sec-title cp-sub">Reglas de tipificación</h4>
+            <ul class="lista-porque" id="cfg-reglas"></ul>
+          </div>
+        </div>
+
+        <!-- VISTA 6: DETALLE DE UN CASO -->
+        <div class="vista" data-vista="caso" hidden>
+          <div class="caso-top">
+            <div class="caso-titulo-fila">
+              <h2 class="caso-titulo" id="cp-titulo">Caso</h2>
+              <span id="cp-chips" class="caso-chips"></span>
+            </div>
+            <div class="acciones-menu">
+              <button class="btn-acciones" id="btn-acciones" aria-haspopup="true">Acciones
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+              <div class="menu-acciones" id="menu-acciones" hidden>
+                <button data-accion="Confirmar">Confirmar tipología</button>
+                <button data-accion="Corregir">Corregir tipología</button>
+                <button data-accion="Nueva modalidad">Marcar como nueva modalidad</button>
+                <button data-accion="Comentario">Agregar nota</button>
+              </div>
+            </div>
+          </div>
+          <p class="caso-meta" id="cp-meta"></p>
+
+          <nav class="caso-tabs" id="cp-tabs">
+            <button class="caso-tab activa" data-tab="detalle">Detalle</button>
+            <button class="caso-tab" data-tab="transacciones">Transacciones</button>
+            <button class="caso-tab" data-tab="cliente">Cliente</button>
+            <button class="caso-tab" data-tab="comercio">Comercio</button>
+            <button class="caso-tab" data-tab="dispositivo">Dispositivo</button>
+            <button class="caso-tab" data-tab="llamada">Llamada</button>
+            <button class="caso-tab" data-tab="historial">Historial</button>
+            <button class="caso-tab" data-tab="notas">Notas</button>
+          </nav>
+
+          <!-- Detalle -->
+          <div class="caso-panel" data-tab="detalle">
+            <div class="caso-grid">
+              <div class="content-card">
+                <h3 class="card-title">Información del caso</h3>
+                <div class="info-filas" id="cp-info"></div>
+              </div>
+              <div class="caso-col-der">
+                <div class="content-card">
+                  <h3 class="card-title">Datos del cliente</h3>
+                  <div class="info-filas compactas" id="cp-datos-cliente"></div>
+                </div>
+                <div class="content-card">
+                  <h3 class="card-title">Datos del comercio</h3>
+                  <div class="info-filas compactas" id="cp-datos-comercio"></div>
+                </div>
+              </div>
+            </div>
+            <div class="content-card">
+              <h3 class="card-title">Línea de tiempo del caso</h3>
+              <div class="linea-tiempo" id="cp-linea"></div>
+            </div>
+            <div class="caso-acciones-grandes caso-acciones">
+              <button class="btn-accion principal" data-accion="Confirmar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Confirmar tipología</button>
+              <button class="btn-accion" data-accion="Corregir">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>
+                Corregir tipología</button>
+              <button class="btn-accion" data-accion="Nueva modalidad">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                Marcar como nueva modalidad</button>
+            </div>
+          </div>
+
+          <!-- Transacciones -->
+          <div class="caso-panel" data-tab="transacciones" hidden>
+            <div class="content-card">
+              <div class="card-header">
+                <h3 class="card-title">Movimientos de la tarjeta</h3>
+                <span class="card-badge-type" id="cp-tx-nota"></span>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table tabla-compacta">
+                  <thead><tr><th>Fecha</th><th>Comercio</th><th>Monto</th><th>Canal / Lectura</th><th>Terminal</th><th>Ciudad</th><th>Marca</th></tr></thead>
+                  <tbody id="cp-tx"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cliente -->
+          <div class="caso-panel" data-tab="cliente" hidden>
+            <div class="caso-grid">
+              <div class="content-card">
+                <h3 class="card-title">Perfil del cliente</h3>
+                <div class="kv-lista" id="cp-perfil"></div>
+              </div>
+              <div class="caso-col-der">
+                <div class="content-card">
+                  <h3 class="card-title">Cuentas</h3>
+                  <div class="table-responsive"><table class="data-table tabla-compacta">
+                    <thead><tr><th>Cuenta</th><th>Tipo</th><th>Saldo</th><th>Estado</th><th>Apertura</th></tr></thead>
+                    <tbody id="cp-cuentas"></tbody></table></div>
+                </div>
+                <div class="content-card">
+                  <h3 class="card-title">Tarjetas</h3>
+                  <div class="table-responsive"><table class="data-table tabla-compacta">
+                    <thead><tr><th>Tarjeta</th><th>Tipo</th><th>Límite</th><th>Estado</th><th>Vence</th></tr></thead>
+                    <tbody id="cp-tarjetas"></tbody></table></div>
+                </div>
+                <div class="content-card">
+                  <h3 class="card-title">Tickets de soporte (180 días previos)</h3>
+                  <div id="cp-tickets"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comercio -->
+          <div class="caso-panel" data-tab="comercio" hidden>
+            <div class="caso-grid">
+              <div class="content-card">
+                <h3 class="card-title">Comercio de la transacción reclamada</h3>
+                <div class="kv-lista" id="cp-comercio"></div>
+              </div>
+              <div class="content-card">
+                <h3 class="card-title">¿Es un comercio sospechoso?</h3>
+                <div id="cp-comercio-riesgo"></div>
+                <h4 class="m-sec-title cp-sub">Patrones del Agente 2 que incluyen este caso</h4>
+                <div id="cp-patrones"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dispositivo: la base de datos del prototipo no registra estos datos -->
+          <div class="caso-panel" data-tab="dispositivo" hidden>
+            <div class="content-card">
+              <h3 class="card-title">Dispositivo de la operación</h3>
+              <p class="m-sec-text texto-tenue">La base de datos del prototipo no registra el dispositivo desde el que se hizo
+                la operación. Estos campos quedan vacíos hasta conectar la fuente real del banco.</p>
+              <div class="kv-lista sin-datos-lista">
+                <span class="kv-clave">Tipo de dispositivo</span><span class="kv-valor"><span class="sin-dato">No disponible en la base de datos</span></span>
+                <span class="kv-clave">Sistema operativo</span><span class="kv-valor"><span class="sin-dato">No disponible en la base de datos</span></span>
+                <span class="kv-clave">Dirección IP</span><span class="kv-valor"><span class="sin-dato">No disponible en la base de datos</span></span>
+                <span class="kv-clave">Ubicación del dispositivo</span><span class="kv-valor"><span class="sin-dato">No disponible en la base de datos</span></span>
+                <span class="kv-clave">¿Dispositivo nuevo para el cliente?</span><span class="kv-valor"><span class="sin-dato">No disponible en la base de datos</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Llamada -->
+          <div class="caso-panel" data-tab="llamada" hidden>
+            <div class="nota-version" id="cp-nota-version"></div>
+            <p class="traza" id="cp-traza"></p>
+            <div class="caso-grid mitad">
+              <div class="content-card">
+                <div class="card-header">
+                  <h3 class="card-title"><span class="pill-comparativa antes">ANTES</span> Transcripción original</h3>
+                  <span class="card-badge-type">Audio crudo sin procesar</span>
+                </div>
+                <div class="texto-crudo" id="cp-transcript"></div>
+              </div>
+              <div class="content-card">
+                <div class="card-header">
+                  <h3 class="card-title"><span class="pill-comparativa despues">DESPUÉS</span> Diálogo limpio</h3>
+                  <span class="card-badge-type">IA Fase 1 · Datos protegidos</span>
+                </div>
+                <div class="texto-crudo" id="cp-dialogo"></div>
+              </div>
+            </div>
+            <div class="content-card">
+              <div class="modal-section"><h4 class="m-sec-title">Razonamiento de la IA</h4><div id="cp-razonamiento"></div></div>
+              <div class="modal-section"><h4 class="m-sec-title">Regla de blindaje propuesta</h4><pre class="code-box" id="cp-blindaje"></pre></div>
+              <details class="contexto-exacto" id="cp-contexto-wrap">
+                <summary>Ver el texto exacto enviado a Claude</summary>
+                <pre class="code-box" id="cp-contexto"></pre>
+              </details>
+            </div>
+          </div>
+
+          <!-- Historial -->
+          <div class="caso-panel" data-tab="historial" hidden>
+            <div class="content-card">
+              <div class="card-header">
+                <h3 class="card-title">Decisiones del analista</h3>
+                <span class="card-badge-type">La tipología que fije aquí la usa el Agente 2 en su próxima corrida</span>
+              </div>
+              <div id="cp-historial"></div>
+            </div>
+          </div>
+
+          <!-- Notas -->
+          <div class="caso-panel" data-tab="notas" hidden>
+            <div class="content-card">
+              <h3 class="card-title">Notas del caso</h3>
+              <div class="nota-nueva">
+                <textarea class="form-textarea" id="cp-nota-texto" placeholder="Escribe una nota para el equipo…"></textarea>
+                <button class="btn-primary" id="cp-nota-guardar">Agregar nota</button>
+              </div>
+              <p class="rev-error" id="cp-nota-error" hidden></p>
+              <div id="cp-notas"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: TERMINALES DE RIESGO -->
+  <div class="modal-backdrop" id="modal-entidades">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-id">A2</span>
+          <h3 class="modal-title">Comercios sospechosos</h3>
+        </div>
+        <button class="modal-close" id="btn-close-entidades">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="m-sec-text">Comercios o terminales donde se concentran muchas más víctimas o cobros de fraude de los que habría
+          por casualidad. El Agente 2 los detecta con una prueba estadística, sin usar IA generativa.</p>
+        <div id="lista-entidades"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-close-entidades-footer">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DECISIÓN DEL ANALISTA SOBRE UN CASO -->
+  <div class="modal-backdrop" id="modal-revision">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="rev-titulo">Decisión del analista</h3>
+        <button class="modal-close" id="btn-close-rev">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="val-form-intro" id="rev-intro"></p>
+        <div class="form-group" id="rev-grupo-tipologia">
+          <label class="form-label" for="rev-tipologia">Tipología correcta (Manual de Modalidades):</label>
+          <select class="form-select" id="rev-tipologia"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rev-comentario" id="rev-etiqueta-comentario">Comentario:</label>
+          <textarea class="form-textarea" id="rev-comentario" placeholder="Por qué tomas esta decisión…"></textarea>
+        </div>
+        <p class="rev-error" id="rev-error" hidden></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel-rev">Cancelar</button>
+        <button class="btn-primary" id="btn-save-rev">Guardar decisión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VALIDACIÓN HUMANA (HUMAN-IN-THE-LOOP) -->
+  <div class="modal-backdrop" id="modal-validar">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Validación de Hipótesis / Patrón</h3>
+        <button class="modal-close" id="btn-close-val-modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="val-form-intro">Como analista de fraude, evalúa la calidad técnica del hallazgo y decide su estado para la siguiente fase:</p>
+        
+        <div class="form-group">
+          <label class="form-label">Patrón o Hipótesis seleccionada:</label>
+          <select class="form-select" id="val-select-patron">
+            <!-- Opciones cargadas dinámicamente -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Estado de la Validación:</label>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="val_estado" value="Validado" checked>
+              <div class="radio-info">
+                <span class="r-title">Validado (Aprobado)</span>
+                <span class="r-desc">Hallazgo verídico con evidencia sólida. Procede a regla en producción.</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="val_estado" value="En Investigación">
+              <div class="radio-info">
+                <span class="r-title">Requiere Investigación Profunda</span>
+                <span class="r-desc">Patrón emergente prometedor pero requiere más casos.</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="val_estado" value="Descartado">
+              <div class="radio-info">
+                <span class="r-title">Descartado (Falso Positivo)</span>
+                <span class="r-desc">Comportamiento legítimo estacional o ruido estadístico.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Observaciones o Comentario Técnico del Analista:</label>
+          <textarea class="form-textarea" id="val-comentario" placeholder="Escribe aquí tus notas técnicas, justificación o indicaciones para la mesa de monitoreo..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel-val">Cancelar</button>
+        <button class="btn-primary" id="btn-save-val">Guardar Dictamen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
